@@ -1,7 +1,9 @@
 package jpabook.jpashop.domain;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -15,6 +17,7 @@ import static jakarta.persistence.FetchType.LAZY;
 @Table(name = "orders")
 @Getter
 @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Order {
 
     @Id
@@ -54,4 +57,36 @@ public class Order {
         delivery.setOrder(this);
     }
 
+    //==생성메서드==//
+    public static Order createOrder(Member member, Delivery delivery, OrderItem... orderItems) {
+        Order order = new Order();
+        order.setMember(member);
+        order.setDelivery(delivery);
+        for(OrderItem orderitem : orderItems){
+            order.addOrderItem(orderitem);
+        }
+        order.setStatus(OrderStatus.ORDER);
+        order.setOrderDate(LocalDateTime.now());
+
+        return order;
+    }
+
+    //==비지니스 로직==//
+    // 주문 취소
+    public void cancel() {
+        if (delivery.getStatus() == DeliveryStatus.COMP) {
+            throw new IllegalStateException("이미 배송완료된 상폼은 취소 불가능합니다.");
+        }
+        this.setStatus(OrderStatus.CANCEL);
+        for(OrderItem orderItem : orderItems){
+            orderItem.cancel();
+        }
+    }
+
+    //==조회 로직==//
+    // 전체 주문 가격 조회
+    public int getTotalPrice() {
+        int totalPrice = orderItems.stream().mapToInt(OrderItem::getOrderTotalPrice).sum();
+        return totalPrice;
+    }
 }
