@@ -20,6 +20,16 @@ public class ItemService {
         itemRepository.save(item);
     }
 
+    @Transactional
+//    public void updateItem(Long itemId, UpdateItemDto item) {
+    public void updateItem(Long itemId, String name, int price, int stockQuantity) {
+        // 변경감지 dirty checking
+        Item findItem = itemRepository.findOne(itemId);
+//        findItem.change(price, name, stockQuantity); // 의미있는 메서드 생성 필요 // 훨씬 좋음
+        findItem.setName(name);
+        findItem.setPrice(price);
+        findItem.setStockQuantity(stockQuantity);
+    }
     public List<Item> findItems() {
         return itemRepository.findAll();
     }

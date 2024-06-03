@@ -33,7 +33,7 @@ class MemberServiceTest {
         //then
         assertEquals(member, memberRepository.findOne(savedId));
     }
-    //@Test(expected = IllegalStateException.class)
+
     @Test
     public void 중복_회원_예외() throws Exception {
         //given
