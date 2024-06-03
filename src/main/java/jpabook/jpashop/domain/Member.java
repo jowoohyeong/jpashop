@@ -23,4 +23,14 @@ public class Member {
 
     @OneToMany(mappedBy = "member")
     private List<Order> orders = new ArrayList<>();
+
+    //==생성메서드==//
+    public static Member createMember(String name, Address address){
+        Member member = new Member();
+
+        member.setName(name);
+        member.setAddress(address);
+
+        return member;
+    }
 }
