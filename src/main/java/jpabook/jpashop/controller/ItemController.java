@@ -1,14 +1,11 @@
 package jpabook.jpashop.controller;
 
 import jpabook.jpashop.domain.item.Book;
-import jpabook.jpashop.domain.item.Item;
-import jpabook.jpashop.repository.ItemRepository;
 import jpabook.jpashop.service.ItemService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,8 +14,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ItemController {
 
-    @Autowired
     private final ItemService itemService;
+    private final ModelMapper modelMapper;
 
     @GetMapping("/items/new")
     public String createForm(Model model) {
@@ -29,6 +26,7 @@ public class ItemController {
 
     @PostMapping("/items/new")
     public String create(BookForm form) {
+        /*
         Book book = new Book();
 
         book.setName(form.getName());
@@ -36,6 +34,8 @@ public class ItemController {
         book.setStockQuantity(form.getStockQuantity());
         book.setAuthor(form.getAuthor());
         book.setIsbn(form.getIsbn());
+        */
+        Book book = modelMapper.map(form, Book.class);
 
         itemService.saveItem(book);
         return "redirect:/";
@@ -51,6 +51,7 @@ public class ItemController {
     @GetMapping("items/{itemId}/edit")
     public String updateItemForm(@PathVariable("itemId") Long itemId, Model model) {
         Book item = (Book) itemService.findOne(itemId);
+/*
 
         BookForm form = new BookForm();
         form.setId(item.getId());
@@ -59,6 +60,8 @@ public class ItemController {
         form.setStockQuantity(item.getStockQuantity());
         form.setAuthor(item.getAuthor());
         form.setIsbn(item.getIsbn());
+*/
+        BookForm form = modelMapper.map(item, BookForm.class);
 
         model.addAttribute("form", form);
         return "items/updateItemForm";
